@@ -1,10 +1,13 @@
 import express from 'express';
 import config from './config/config';
 import morgan from 'morgan';
-import { errorHandler } from './middleware/errorHandler';
 import mongoose from 'mongoose';
 import session from 'express-session';
 import mongoDbStore from 'connect-mongo';
+import passport from 'passport';
+import { errorHandler } from './middleware/errorHandler';
+import { Strategy as LocalStrategy } from 'passport-local';
+import { User } from './models/user.model';
 
 (async () => {
     try {
@@ -44,6 +47,14 @@ import mongoDbStore from 'connect-mongo';
     app.use(express.urlencoded({ extended: true }));
     app.use(express.json());
     app.use(session(sessionOptions));
+
+    // Auth configuration
+    passport.use(new LocalStrategy(User.authenticate()));
+    // @ts-ignore
+    passport.serializeUser(User.serializeUser());
+    passport.deserializeUser(User.deserializeUser());
+    app.use(passport.initialize());
+    app.use(passport.session());
 
     // Routes
     app.use('/', (req, res) => {
