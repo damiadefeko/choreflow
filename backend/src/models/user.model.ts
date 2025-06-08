@@ -2,7 +2,7 @@ import { Document, model, Schema } from "mongoose";
 import passportLocalMongoose from 'passport-local-mongoose'
 import { ModelNames } from "../utils/constants";
 
-interface IUser extends Document {
+export interface IUser extends Document {
     isAdmin: boolean;
     email: string;
 }

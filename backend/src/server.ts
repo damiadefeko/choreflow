@@ -5,9 +5,10 @@ import mongoose from 'mongoose';
 import session from 'express-session';
 import mongoDbStore from 'connect-mongo';
 import passport from 'passport';
-import { errorHandler } from './middleware/errorHandler';
+import { CustomError, errorHandler } from './middleware/errorHandler';
 import { Strategy as LocalStrategy } from 'passport-local';
-import { User } from './models/user.model';
+import { IUser, User } from './models/user.model';
+import { API_PREFIX } from './utils/constants';
 
 (async () => {
     try {
@@ -49,7 +50,7 @@ import { User } from './models/user.model';
     app.use(session(sessionOptions));
 
     // Auth configuration
-    passport.use(new LocalStrategy(User.authenticate()));
+    passport.use(new LocalStrategy({ usernameField: 'email', passwordField: 'password' }, User.authenticate()));
     // @ts-ignore
     passport.serializeUser(User.serializeUser());
     passport.deserializeUser(User.deserializeUser());
@@ -57,9 +58,44 @@ import { User } from './models/user.model';
     app.use(passport.session());
 
     // Routes
-    app.use('/', (req, res) => {
+    app.get('/', (req, res) => {
         res.send('Hello, World!');
     });
+
+    app.post(`${API_PREFIX}/auth/login`, (req, res, next) => {
+        passport.authenticate('local', (err: Error, user: IUser, info: { message: string }) => {
+            console.log("HERE");
+            // Pass errors to error handler
+            if (err) {
+                return next(err);
+            }
+
+            if (!user) {
+                // If user is not found or authentication fails, throw a custom error
+                return next(new CustomError(
+                    info.message || 'Authentication failed',
+                    401,
+                    'AUTH_ERROR',
+                ));
+            }
+
+            req.logIn(user, (err) => {
+                if (err) {
+                    return next(err);
+                }
+
+                return res.status(200).json({
+                    success: true,
+                    user: {
+                        id: user._id,
+                        email: user.email,
+                        isAdmin: user.isAdmin
+                    }
+                });
+            });
+        })(req, res, next);
+    });
+
     app.use(errorHandler);
 
     app.listen(config.port, () => {
