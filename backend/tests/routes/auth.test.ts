@@ -1,9 +1,9 @@
 import request from 'supertest';
-import { app, setupServer } from '../src/utils/server';
-import { User } from '../src/models/user.model';
+import { app, setupServer } from '../../src/utils/server';
+import { User } from '../../src/models/user.model';
 import mongoose from 'mongoose';
-import config from '../src/config/config';
-import { API_PREFIX } from '../src/utils/constants';
+import config from '../../src/config/config';
+import { API_PREFIX } from '../../src/utils/constants';
 
 describe('Authentication & Registration', () => {
     // Test Setup
