@@ -126,4 +126,45 @@ describe('Authentication & Registration', () => {
             expect(response.body).toHaveProperty('success', false);
         });
     });
+
+    describe('Logout', () => {
+
+        beforeEach(async () => {
+            // Test user
+            const user = new User({ email: 'test@example.com' });
+            await User.register(user, 'password123');
+        });
+
+        it('should logout the user', async () => {
+            const loginResponse = await request(app)
+                .post(`${API_PREFIX}/auth/login`)
+                .send({
+                    email: 'test@example.com',
+                    password: 'password123'
+                });
+            expect(loginResponse.status).toBe(200);
+            expect(loginResponse.body).toHaveProperty('success', true);
+            expect(loginResponse.headers['set-cookie']).toBeDefined();
+
+            const responseLogout = await request(app)
+                .post(`${API_PREFIX}/auth/logout`)
+                .set('Cookie', loginResponse.headers['set-cookie']);
+            expect(responseLogout.status).toBe(200);
+            expect(responseLogout.body).toHaveProperty('success', true);
+            expect(responseLogout.headers['set-cookie']).toBeDefined();
+        });
+
+        it('should fail with no active session', async () => {
+            // Attempting to logout again should fail
+            const logoutResponse = await request(app)
+                .post(`${API_PREFIX}/auth/logout`);
+
+            expect(logoutResponse.status).toBe(401);
+            expect(logoutResponse.body).toEqual({
+                success: false,
+                message: 'No active session',
+                code: 'NO_SESSION'
+            });
+        });
+    });
 });

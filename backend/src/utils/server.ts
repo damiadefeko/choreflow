@@ -148,6 +148,47 @@ export async function setupServer() {
             }
         });
 
+        // Logout route
+        app.post(`${API_PREFIX}/auth/logout`, (req, res, next) => {
+            // Check if user is authenticated
+            if (!req.isAuthenticated()) {
+                return next(new CustomError(
+                    'No active session',
+                    401,
+                    'NO_SESSION'
+                ));
+            }
+
+            req.logout((err) => {
+                if (err) {
+                    return next(new CustomError(
+                        'Logout failed',
+                        500,
+                        'LOGOUT_ERROR',
+                        { error: err.message }
+                    ));
+                }
+
+                // Destroy the session after logout
+                req.session.destroy((err) => {
+                    if (err) {
+                        return next(new CustomError(
+                            'Session cleanup failed',
+                            500,
+                            'SESSION_ERROR',
+                            { error: err.message }
+                        ));
+                    }
+
+                    res.clearCookie('s_id');
+                    return res.status(200).json({
+                        success: true,
+                        message: 'Logged out successfully'
+                    });
+                });
+            });
+        });
+
         app.use(errorHandler);
     } catch (error) {
         console.error('Error setting up the server:', error);
