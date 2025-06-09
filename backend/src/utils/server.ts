@@ -45,7 +45,6 @@ export async function setupServer() {
             }
         };
 
-
         // Middleware
         app.use(morgan('dev'));
         app.use(express.urlencoded({ extended: true }));
