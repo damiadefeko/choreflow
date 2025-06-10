@@ -2,6 +2,9 @@ import passport from "passport";
 import { Request, Response, NextFunction } from "express";
 import { CustomError } from "../middleware/errorHandler";
 import { IUser, User } from "../models/user.model";
+import { Family } from "../models/family.model";
+import { FamilyMember } from "../models/family-member.model";
+import { nanoid } from 'nanoid';
 
 export function login(req: Request, res: Response, next: NextFunction) {
     passport.authenticate('local', (err: Error, user: IUser, info: { message: string }) => {
@@ -38,7 +41,7 @@ export function login(req: Request, res: Response, next: NextFunction) {
 
 export async function register(req: Request, res: Response, next: NextFunction) {
     try {
-        const { email, password } = req.body;
+        const { email, password, isAdmin, inviteId } = req.body;
 
         // Ensure email and password are not empty
         if (!email || !password) {
@@ -59,8 +62,30 @@ export async function register(req: Request, res: Response, next: NextFunction) 
             );
         }
 
-        const user = new User({ email });
+        const user = new User({ email, isAdmin });
         const registeredUser = await User.register(user, password);
+
+        // When a user registers as an admin, create a new family
+        if (isAdmin) {
+            const newFamily = new Family({ admin: user, inviteId: nanoid(10) });
+            await newFamily.save();
+        } else {
+            // If the user is not an admin, check if an inviteId is provided
+            // This means they have been invited to an existing family
+            const existingFamily = await Family.findOne({ inviteId });
+            if (existingFamily) {
+                // If family exists, add the user as a family member
+                const familyMember = new FamilyMember({ user, family: existingFamily });
+                await familyMember.save();
+                // Push the new family member to the existing family's members
+                existingFamily.familyMembers.push(familyMember);
+                await existingFamily.save();
+            } else {
+                // In this case the user was not invited to any family
+                const familyMember = new FamilyMember({ user });
+                await familyMember.save();
+            }
+        }
 
         req.logIn(registeredUser, (err) => {
             if (err) {

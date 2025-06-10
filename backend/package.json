@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "build": "tsc",
+    "build": "rm -rf ./dist && tsc",
     "start": "node dist/index.js",
     "dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts",
     "test": "jest  --detectOpenHandles --forceExit"
@@ -40,6 +40,7 @@
     "express-session": "^1.18.1",
     "mongoose": "^8.14.1",
     "morgan": "^1.10.0",
+    "nanoid": "^5.1.5",
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",
     "passport-local-mongoose": "^8.0.0"

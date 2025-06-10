@@ -4,6 +4,7 @@ import { User } from '../../src/models/user.model';
 import mongoose from 'mongoose';
 import config from '../../src/config/config';
 import { API_PREFIX } from '../../src/utils/constants';
+import { FamilyMember } from '../../src/models/family-member.model';
 
 describe('Authentication & Registration', () => {
     // Test Setup
@@ -78,12 +79,14 @@ describe('Authentication & Registration', () => {
     });
 
     describe('Register', () => {
-        it('should register a new user', async () => {
+        it('should register a new user - not admin & no invite', async () => {
             const response = await request(app)
                 .post(`${API_PREFIX}/auth/register`)
                 .send({
                     email: 'newuser@example.com',
-                    password: 'password123'
+                    password: 'password123',
+                    isAdmin: false,
+                    inviteId: null
                 });
 
             expect(response.status).toBe(201);
@@ -95,6 +98,9 @@ describe('Authentication & Registration', () => {
             // Verify user was saved to database
             const user = await User.findOne({ email: 'newuser@example.com' });
             expect(user).toBeTruthy();
+
+            const newFamilyMember = await FamilyMember.findOne({ user: { email: 'newuser@example.com' } });
+            expect(newFamilyMember).toBeTruthy();
         });
 
         it('should fail when registering with existing email', async () => {

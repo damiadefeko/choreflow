@@ -22,7 +22,6 @@ export const FamilyMemberSchema = new Schema<IFamilyMember>({
     family: {
         type: Schema.Types.ObjectId,
         ref: ModelNames.FAMILY,
-        required: true,
     },
 }, {
     timestamps: true,
