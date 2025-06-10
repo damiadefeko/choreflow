@@ -2,7 +2,6 @@ import request from 'supertest';
 import { app, setupServer } from '../../src/utils/server';
 import { User } from '../../src/models/user.model';
 import mongoose from 'mongoose';
-import config from '../../src/config/config';
 import { API_PREFIX } from '../../src/utils/constants';
 import { FamilyMember } from '../../src/models/family-member.model';
 
@@ -14,8 +13,7 @@ describe('Authentication & Registration', () => {
             jest.spyOn(console, 'error').mockImplementation();
             jest.spyOn(console, 'log').mockImplementation();
 
-            await setupServer();
-            await mongoose.connect(config.dbTestUrl as string);
+            await setupServer(true);
         } catch (error) {
             console.error('Error setting up test environment:', error);
         }
@@ -26,8 +24,9 @@ describe('Authentication & Registration', () => {
     });
 
     beforeEach(async () => {
-        // Clear users collection before each test
+        // Clear collections before each test
         await User.deleteMany({});
+        await FamilyMember.deleteMany({});
     });
 
     describe('Login', () => {
@@ -99,7 +98,7 @@ describe('Authentication & Registration', () => {
             const user = await User.findOne({ email: 'newuser@example.com' });
             expect(user).toBeTruthy();
 
-            const newFamilyMember = await FamilyMember.findOne({ user: { email: 'newuser@example.com' } });
+            const newFamilyMember = await FamilyMember.findOne({ user: user?._id });
             expect(newFamilyMember).toBeTruthy();
         });
 
@@ -139,6 +138,10 @@ describe('Authentication & Registration', () => {
             // Test user
             const user = new User({ email: 'test@example.com' });
             await User.register(user, 'password123');
+        });
+
+        afterAll(async () => {
+            await User.deleteMany({});
         });
 
         it('should logout the user', async () => {

@@ -4,7 +4,7 @@ import { CustomError } from "../middleware/errorHandler";
 import { IUser, User } from "../models/user.model";
 import { Family } from "../models/family.model";
 import { FamilyMember } from "../models/family-member.model";
-import { nanoid } from 'nanoid';
+import { generateInviteId } from "../utils/helper";
 
 export function login(req: Request, res: Response, next: NextFunction) {
     passport.authenticate('local', (err: Error, user: IUser, info: { message: string }) => {
@@ -67,7 +67,7 @@ export async function register(req: Request, res: Response, next: NextFunction) 
 
         // When a user registers as an admin, create a new family
         if (isAdmin) {
-            const newFamily = new Family({ admin: user, inviteId: nanoid(10) });
+            const newFamily = new Family({ admin: user, inviteId: generateInviteId() });
             await newFamily.save();
         } else {
             // If the user is not an admin, check if an inviteId is provided

@@ -13,10 +13,10 @@ import { authRouter } from '../routes/auth.route';
 
 export const app = express();
 
-export async function setupServer() {
+export async function setupServer(isTest: boolean = false) {
     try {
         try {
-            await mongoose.connect(config.dbUrl);
+            await mongoose.connect(isTest ? config.dbTestUrl as string : config.dbUrl);
             console.log('Database connected successfully');
         } catch (error) {
             console.error('Database connection failed:', error);
