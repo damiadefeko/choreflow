@@ -4,6 +4,7 @@ import { User } from '../../src/models/user.model';
 import mongoose from 'mongoose';
 import { API_PREFIX } from '../../src/utils/constants';
 import { FamilyMember } from '../../src/models/family-member.model';
+import { Family } from '../../src/models/family.model';
 
 describe('Authentication & Registration', () => {
     // Test Setup
@@ -99,6 +100,72 @@ describe('Authentication & Registration', () => {
             expect(user).toBeTruthy();
 
             const newFamilyMember = await FamilyMember.findOne({ user: user?._id });
+            expect(newFamilyMember).toBeTruthy();
+        });
+        it('should register a new user - admin & create family', async () => {
+            const response = await request(app)
+                .post(`${API_PREFIX}/auth/register`)
+                .send({
+                    email: 'newuser@example.com',
+                    password: 'password123',
+                    isAdmin: true,
+                    inviteId: null
+                });
+
+            expect(response.status).toBe(201);
+            expect(response.body).toHaveProperty('success', true);
+            expect(response.body.user).toHaveProperty('email', 'newuser@example.com');
+            expect(response.body.user).toHaveProperty('id');
+            expect(response.headers['set-cookie']).toBeDefined();
+
+            // Verify user was saved to database
+            const user = await User.findOne({ email: 'newuser@example.com' });
+            expect(user).toBeTruthy();
+
+            const newFamily = await Family.findOne({ admin: user?._id });
+            expect(newFamily).toBeTruthy();
+        });
+        it('should register a new user - not admin & with invite', async () => {
+            // First create an admin user
+            await request(app)
+                .post(`${API_PREFIX}/auth/register`)
+                .send({
+                    email: 'newuser@example.com',
+                    password: 'password123',
+                    isAdmin: true,
+                    inviteId: null
+                });
+
+            const admin = await User.findOne({ email: 'newuser@example.com' });
+            expect(admin).toBeTruthy();
+            const newFamily = await Family.findOne({ admin: admin?._id });
+            expect(newFamily).toBeTruthy();
+            const inviteId = newFamily?.inviteId;
+            expect(inviteId).toBeDefined();
+
+            // Now register a new user with the invite ID
+            const userResponse = await request(app)
+                .post(`${API_PREFIX}/auth/register`)
+                .send({
+                    email: 'newuser2@example.com',
+                    password: 'password123',
+                    isAdmin: false,
+                    inviteId: inviteId
+                });
+
+            expect(userResponse.status).toBe(201);
+            const newUser = await User.findOne({ email: 'newuser2@example.com' })
+            expect(newUser).toBeTruthy();
+            // Verify the user was added to the family
+            const family = await Family.findOne({ admin: admin?._id })
+                .populate({
+                    path: 'familyMembers',
+                    populate: {
+                        path: 'user'
+                    }
+                });
+
+            const newFamilyMember = family?.familyMembers.find(member => member.user.email === newUser?.email);
             expect(newFamilyMember).toBeTruthy();
         });
 
