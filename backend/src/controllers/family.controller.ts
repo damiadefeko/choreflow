@@ -30,3 +30,29 @@ export async function getFamily(req: Request, res: Response, next: NextFunction)
         next(error);
     }
 }
+
+export async function getFamilyMember(req: Request, res: Response, next: NextFunction) {
+    try {
+        const { familyMemberId } = req.params;
+
+        const familyMember = await FamilyMember.findById(familyMemberId).populate('user').populate('score');
+
+        if (!familyMember) {
+            throw new CustomError('Family member not found', 404, 'FAMILY_MEMBER_NOT_FOUND');
+        }
+        res.status(200).json({
+            success: true,
+            familyMember: {
+                id: familyMember._id,
+                user: {
+                    id: familyMember.user._id,
+                    email: familyMember.user.email,
+                },
+                score: familyMember.score,
+            }
+        });
+
+    } catch (error) {
+        next(error);
+    }
+}

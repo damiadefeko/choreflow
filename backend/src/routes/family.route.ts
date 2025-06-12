@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { isAuthenticated } from "../middleware/authentication";
-import { getFamily } from "../controllers/family.controller";
+import { getFamily, getFamilyMember } from "../controllers/family.controller";
 
 export const familyRouter = Router();
 
@@ -8,3 +8,4 @@ export const familyRouter = Router();
 familyRouter.use(isAuthenticated);
 
 familyRouter.route("/member").get(getFamily);
+familyRouter.route("/member/:familyMemberId").get(getFamilyMember);
