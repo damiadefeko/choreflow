@@ -9,7 +9,7 @@ export interface IFamily extends Document {
     inviteId: string;
 }
 
-export const FamilySchema = new Schema<IFamily>({
+const FamilySchema = new Schema<IFamily>({
     admin: {
         type: Schema.Types.ObjectId,
         ref: ModelNames.USER,

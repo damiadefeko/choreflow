@@ -7,3 +7,10 @@ export function generateInviteId(): string {
     }
     return inviteId;
 }
+
+export function getStartOfWeek(): Date {
+    const currentDate = new Date();
+    const diff = currentDate.getDate() - currentDate.getDay() + 1;
+    // Set the date to the first day of the week (Monday)
+    return new Date(currentDate.setDate(diff));
+}

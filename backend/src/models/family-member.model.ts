@@ -9,7 +9,7 @@ export interface IFamilyMember extends Document {
     family: IFamily;
 }
 
-export const FamilyMemberSchema = new Schema<IFamilyMember>({
+const FamilyMemberSchema = new Schema<IFamilyMember>({
     user: {
         type: Schema.Types.ObjectId,
         ref: ModelNames.USER,
