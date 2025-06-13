@@ -62,3 +62,29 @@ export async function createChore(req: Request, res: Response, next: NextFunctio
         next(error);
     }
 }
+
+export async function getChores(req: Request, res: Response, next: NextFunction) {
+    try {
+        // @ts-ignore
+        const { familyId } = req.params;
+
+        // Now get the latest chore week for the family by sorting by week
+        const choreWeek = await ChoreWeek.find({ family: familyId }).sort({ weekStart: 'descending' }).limit(1);
+        // No chore week means that there are no chores for the family
+        if (!choreWeek) {
+            throw new CustomError("No chore week found for this family", 404);
+        }
+        // Get all the chores for the latest chore week
+        const choresByWeek = await Chore.find({ choreWeek: choreWeek[0]._id }).populate('assignees');
+        res.status(200).json({
+            success: true,
+            message: "Chores fetched successfully",
+            data: {
+                chores: choresByWeek,
+                choreWeek: choreWeek[0]
+            }
+        });
+    } catch (error) {
+        next(error);
+    }
+}
