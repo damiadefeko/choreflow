@@ -11,6 +11,7 @@ import { User } from '../models/user.model';
 import { API_PREFIX } from './constants';
 import { authRouter } from '../routes/auth.route';
 import { familyRouter } from '../routes/family.route';
+import { choreRouter } from '../routes/chore.route';
 
 export const app = express();
 
@@ -67,6 +68,7 @@ export async function setupServer(isTest: boolean = false) {
 
         app.use(`${API_PREFIX}/auth`, authRouter);
         app.use(`${API_PREFIX}/family`, familyRouter);
+        app.use(`${API_PREFIX}/chores`, choreRouter);
 
         app.use(errorHandler);
     } catch (error) {

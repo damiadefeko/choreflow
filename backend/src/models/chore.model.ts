@@ -1,6 +1,7 @@
 import { Document, model, Schema } from "mongoose";
 import { IChoreWeek } from "./chore-week.model";
 import { ModelNames } from "../utils/constants";
+import { IFamilyMember } from "./family-member.model";
 
 export interface IChore extends Document {
     choreName: string;
@@ -8,6 +9,8 @@ export interface IChore extends Document {
     chorePoints: number;
     choreDeadline: Date;
     choreWeek: IChoreWeek;
+    choreStaus: "pending" | "in progress" | "done" | "rejected";
+    assignees?: IFamilyMember[];
 }
 
 const ChoreSchema = new Schema<IChore>({
@@ -32,6 +35,15 @@ const ChoreSchema = new Schema<IChore>({
         ref: ModelNames.CHORE_WEEK,
         required: true,
     },
+    choreStaus: {
+        type: String,
+        enum: ["pending", "in progress", "done", "rejected"],
+        default: "pending",
+    },
+    assignees: [{
+        type: Schema.Types.ObjectId,
+        ref: ModelNames.FAMILY_MEMBER,
+    }],
 });
 
 export const Chore = model<IChore>(ModelNames.CHORE, ChoreSchema)

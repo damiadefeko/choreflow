@@ -7,5 +7,5 @@ export const familyRouter = Router();
 // Make sure all requests made are with an authenticated user
 familyRouter.use(isAuthenticated);
 
-familyRouter.route("/member").get(getFamily);
+familyRouter.route("/").get(getFamily);
 familyRouter.route("/member/:familyMemberId").get(getFamilyMember);
