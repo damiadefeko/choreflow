@@ -88,3 +88,27 @@ export async function getChores(req: Request, res: Response, next: NextFunction)
         next(error);
     }
 }
+
+export async function updateChore(req: Request, res: Response, next: NextFunction) {
+    try {
+        // @ts-ignore
+        if (!req.user?.isAdmin) {
+            throw new CustomError("Only admins can update chores", 403, "FORBIDDEN");
+        }
+        const { choreId } = req.params;
+        const updateData = req.body as Partial<IChore>;
+
+        const updatedChore = await Chore.findByIdAndUpdate(choreId, updateData, { new: true }).populate('assignees');
+        if (!updatedChore) {
+            throw new CustomError("Chore not found", 404);
+        }
+
+        res.status(200).json({
+            success: true,
+            message: "Chore updated successfully",
+            data: updatedChore
+        });
+    } catch (error) {
+        next(error);
+    }
+}
