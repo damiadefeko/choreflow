@@ -1,1 +1,31 @@
 @import 'tailwindcss';
+
+@font-face {
+    font-family: 'SF Pro Rounded';
+    src: url('./assets/fonts/SFProRounded-Black.woff') format('woff'),
+        url('./assets/fonts/SFProRounded-Bold.woff') format('woff'),
+        url('./assets/fonts/SFProRounded-Heavy.woff') format('woff'),
+        url('./assets/fonts/SFProRounded-Light.woff') format('woff'),
+        url('./assets/fonts/SFProRounded-Medium.woff') format('woff'),
+        url('./assets/fonts/SFProRounded-Regular.woff') format('woff'),
+        url('./assets/fonts/SFProRounded-Semibold.woff') format('woff'),
+        url('./assets/fonts/SFProRounded-Thin.woff') format('woff'),
+        url('./assets/fonts/SFProRounded-Ultralight.woff') format('woff');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Add more weights if needed */
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'SF Pro Rounded', sans-serif;
+}
