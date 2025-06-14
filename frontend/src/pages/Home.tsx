@@ -1,3 +1,9 @@
+import { Page } from '../components/Page';
+
 export function Home() {
-    return <h1>Home Page</h1>;
+    return (
+        <Page>
+            <h1>Hello World</h1>
+        </Page>
+    );
 }
