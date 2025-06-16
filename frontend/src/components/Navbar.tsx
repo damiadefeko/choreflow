@@ -1,3 +1,4 @@
+import { NavLink } from 'react-router-dom';
 import logo from '../assets/images/logo.png';
 export function Navbar() {
     const navLinkStyle = 'text-white font-medium text-[14px] md:text-[16px] xl:text-[20px]';
@@ -8,9 +9,11 @@ export function Navbar() {
                 <a href='#' className={navLinkStyle}>
                     Login
                 </a>
-                <a href='#' className={navLinkStyle}>
+                <NavLink
+                    to='/register'
+                    className={({ isActive }) => `${navLinkStyle} ${isActive ? 'text-(--primary-200)' : ''}`}>
                     Register
-                </a>
+                </NavLink>
             </div>
         </nav>
     );

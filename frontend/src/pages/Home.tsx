@@ -14,7 +14,7 @@ export function Home() {
                     <p className='text-[16px] md:text-[20px] xl:text-[24px] leading-[150%] text-(--text-color-light) text-center xl:text-start'>
                         Easily assign and track household tasks so everyone knows what to do and when.
                     </p>
-                    <Button text='Get Started' />
+                    <Button size='large' text='Get Started' />
                 </div>
                 <img src={heroImg} className='h-auto max-h-[320px] md:max-h-[420px] xl:max-h-[550px]' />
             </main>
