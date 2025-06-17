@@ -4,9 +4,63 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import axios from 'axios';
+import { useAppDispatch } from '@/store/hooks';
+import { setUser } from '@/store/slices/userSlice';
 
 export function Register() {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [password2, setPassword2] = useState('');
+    const [isAdmin, setIsAdmin] = useState(false);
+    const [submissionStatus, setSubmissionStatus] = useState(false);
+
+    const dispatch = useAppDispatch();
+    const navigate = useNavigate();
+
+    async function handleFormSubmit(event: React.FormEvent) {
+        event.preventDefault();
+        if (password !== password2) {
+            alert('Passwords do not match');
+            return;
+        }
+
+        try {
+            setSubmissionStatus(true);
+            const { data } = await axios.post(
+                'http://localhost:3000/api/v1/auth/register',
+                {
+                    email,
+                    password,
+                    isAdmin,
+                },
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    withCredentials: true, // Include cookies in the request
+                }
+            );
+
+            dispatch(
+                setUser({
+                    userId: data.user.id,
+                    email: data.user.email,
+                    isAdmin: data.user.isAdmin,
+                    familyId: data.user.familyId || '', // Assuming familyId is part of the user object
+                })
+            );
+
+            setSubmissionStatus(false);
+            navigate('/dashboard'); // Redirect to the dashboard after successful registration
+        } catch (error) {
+            alert(error);
+            setSubmissionStatus(false);
+        }
+    }
+
     return (
         <Page>
             <main className='flex px-[24px] md:px-[74px] xl:px-[88px] flex-col h-full flex-grow justify-center items-center'>
@@ -15,33 +69,61 @@ export function Register() {
                         <CardTitle className='text-center'>Get Started with your account</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <form>
+                        <form onSubmit={(e) => handleFormSubmit(e)}>
                             <div className='flex flex-col gap-8'>
                                 <div className='grid gap-2'>
                                     <Label htmlFor='email'>Email</Label>
-                                    <Input id='email' type='email' placeholder='m@example.com' required />
+                                    <Input
+                                        id='email'
+                                        type='email'
+                                        placeholder='m@example.com'
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        required
+                                    />
                                 </div>
                                 <div className='grid gap-2'>
                                     <div className='flex items-center'>
                                         <Label htmlFor='password'>Password</Label>
                                     </div>
-                                    <Input id='password' type='password' required />
+                                    <Input
+                                        id='password'
+                                        type='password'
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        required
+                                    />
                                 </div>
                                 <div className='grid gap-2'>
                                     <div className='flex items-center'>
                                         <Label htmlFor='password2'>Password Confirmation</Label>
                                     </div>
-                                    <Input id='password2' type='password2' required />
+                                    <Input
+                                        id='password2'
+                                        type='password'
+                                        value={password2}
+                                        onChange={(e) => setPassword2(e.target.value)}
+                                        required
+                                    />
                                 </div>
                                 <div className='flex items-center gap-3'>
-                                    <Checkbox id='isAdmin' />
+                                    <Checkbox
+                                        id='isAdmin'
+                                        checked={isAdmin}
+                                        onCheckedChange={(checked) => setIsAdmin(!!checked)}
+                                    />
                                     <Label htmlFor='isAdmin'>Register as an admin</Label>
                                 </div>
                             </div>
+                            <Button
+                                size='default'
+                                additionalClasses='mt-8 mb-6 !w-full'
+                                disabled={submissionStatus}
+                                text={submissionStatus ? 'Submitting...' : 'Register'}
+                            />
                         </form>
                     </CardContent>
                     <CardFooter className='flex-col w-full items-center'>
-                        <Button size='default' additionalClasses='mt-6 mb-8 !w-full' text='Register' />
                         <NavLink
                             to='/login'
                             className='text-center inline-block text-sm underline-offset-4 hover:underline'>

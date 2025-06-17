@@ -12,6 +12,7 @@ import { API_PREFIX } from './constants';
 import { authRouter } from '../routes/auth.route';
 import { familyRouter } from '../routes/family.route';
 import { choreRouter } from '../routes/chore.route';
+import cors from 'cors';
 
 export const app = express();
 
@@ -52,6 +53,12 @@ export async function setupServer(isTest: boolean = false) {
         app.use(express.urlencoded({ extended: true }));
         app.use(express.json());
         app.use(session(sessionOptions));
+        app.use(cors({
+            origin: 'http://localhost:5173',
+            credentials: true,
+            methods: ['GET', 'POST', 'PUT', 'DELETE'],
+            allowedHeaders: ['Content-Type', 'Authorization']
+        }));
 
         // Auth configuration
         passport.use(new LocalStrategy({ usernameField: 'email', passwordField: 'password' }, User.authenticate()));

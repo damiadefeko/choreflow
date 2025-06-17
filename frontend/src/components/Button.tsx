@@ -3,6 +3,7 @@ interface ButtonProps {
     onClick?: () => void;
     additionalClasses?: string;
     size: 'default' | 'large';
+    disabled?: boolean;
 }
 export function Button(props: ButtonProps) {
     const sizeClass = props.size === 'large' ? 'py-[10px] md:py-[14px] px-[50px]' : 'py-[8px] md:py-[10px] px-[38px]';
@@ -11,7 +12,7 @@ export function Button(props: ButtonProps) {
     }`;
 
     return (
-        <button className={buttonClass} onClick={props.onClick}>
+        <button className={buttonClass} onClick={props.onClick} disabled={props.disabled}>
             {props.text}
         </button>
     );
