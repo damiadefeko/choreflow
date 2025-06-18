@@ -1,8 +1,10 @@
 import { Page } from '../components/Page';
 import heroImg from '../assets/images/hero.svg';
 import { Button } from '../components/Button';
+import { useNavigate } from 'react-router-dom';
 
 export function Home() {
+    const navigate = useNavigate();
     return (
         <Page>
             <main className='flex px-[24px] md:px-[74px] xl:px-[88px] flex-col xl:flex-row items-center xl:justify-between h-full flex-grow gap-[48px]'>
@@ -14,7 +16,7 @@ export function Home() {
                     <p className='text-[16px] md:text-[20px] xl:text-[24px] leading-[150%] text-(--text-color-light) text-center xl:text-start'>
                         Easily assign and track household tasks so everyone knows what to do and when.
                     </p>
-                    <Button size='large' text='Get Started' />
+                    <Button size='large' text='Get Started' onClick={() => navigate('/dashboard')} />
                 </div>
                 <img src={heroImg} className='h-auto max-h-[320px] md:max-h-[420px] xl:max-h-[550px]' />
             </main>
