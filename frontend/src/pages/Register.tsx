@@ -50,7 +50,6 @@ export function Register() {
                     userId: data.user.id,
                     email: data.user.email,
                     isAdmin: data.user.isAdmin,
-                    familyId: data.user.familyId || '',
                 })
             );
 
