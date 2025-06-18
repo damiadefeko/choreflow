@@ -149,3 +149,25 @@ export function logout(req: Request, res: Response, next: NextFunction) {
         });
     });
 }
+
+export function isSessionActive(req: Request, res: Response, next: NextFunction) {
+    // Check if user is authenticated
+    if (req.isAuthenticated()) {
+        res.status(200).json({
+            success: true,
+            user: {
+                // @ts-ignore
+                id: req.user._id,
+                // @ts-ignore
+                email: req.user.email,
+                // @ts-ignore
+                isAdmin: req.user.isAdmin
+            }
+        });
+    } else {
+        res.status(401).json({
+            success: false,
+            message: 'No active session'
+        });
+    }
+}

@@ -5,9 +5,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useAppDispatch } from '@/store/hooks';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { setUser } from '@/store/slices/userSlice';
 import { API_BASE_URL } from '@/utils/constants';
 
@@ -20,6 +20,39 @@ export function Register() {
 
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
+    const userId = useAppSelector((state) => state.user.userId);
+
+    useEffect(() => {
+        async function checkIsLoggedIn() {
+            if (userId) {
+                return true;
+            }
+
+            let hasActiveSession = false;
+
+            try {
+                const { data } = await axios.get(`${API_BASE_URL}/auth/session`, { withCredentials: true });
+
+                if (data.user) {
+                    hasActiveSession = true;
+                    dispatch(
+                        setUser({
+                            userId: data.user.id,
+                            email: data.user.email,
+                            isAdmin: data.user.isAdmin,
+                        })
+                    );
+                }
+            } catch (error) {
+                console.error(error);
+            }
+
+            if (hasActiveSession) {
+                navigate('/dashboard');
+            }
+        }
+        checkIsLoggedIn();
+    }, []);
 
     async function handleFormSubmit(event: React.FormEvent) {
         event.preventDefault();

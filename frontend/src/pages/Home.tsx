@@ -2,9 +2,48 @@ import { Page } from '../components/Page';
 import heroImg from '../assets/images/hero.svg';
 import { Button } from '../components/Button';
 import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useAppSelector, useAppDispatch } from '@/store/hooks';
+import { setUser } from '@/store/slices/userSlice';
+import { API_BASE_URL } from '@/utils/constants';
+import axios from 'axios';
 
 export function Home() {
     const navigate = useNavigate();
+    const userId = useAppSelector((state) => state.user.userId);
+    const dispatch = useAppDispatch();
+
+    useEffect(() => {
+        async function checkIsLoggedIn() {
+            if (userId) {
+                return true;
+            }
+
+            let hasActiveSession = false;
+
+            try {
+                const { data } = await axios.get(`${API_BASE_URL}/auth/session`, { withCredentials: true });
+
+                if (data.user) {
+                    hasActiveSession = true;
+                    dispatch(
+                        setUser({
+                            userId: data.user.id,
+                            email: data.user.email,
+                            isAdmin: data.user.isAdmin,
+                        })
+                    );
+                }
+            } catch (error) {
+                console.error(error);
+            }
+
+            if (hasActiveSession) {
+                navigate('/dashboard');
+            }
+        }
+        checkIsLoggedIn();
+    }, []);
     return (
         <Page>
             <main className='flex px-[24px] md:px-[74px] xl:px-[88px] flex-col xl:flex-row items-center xl:justify-between h-full flex-grow gap-[48px]'>

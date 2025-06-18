@@ -4,11 +4,11 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { API_BASE_URL } from '@/utils/constants';
 import axios from 'axios';
 import { setUser } from '@/store/slices/userSlice';
-import { useAppDispatch } from '@/store/hooks';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 
 export function Login() {
     const [email, setEmail] = useState('');
@@ -17,6 +17,39 @@ export function Login() {
 
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
+    const userId = useAppSelector((state) => state.user.userId);
+
+    useEffect(() => {
+        async function checkIsLoggedIn() {
+            if (userId) {
+                return true;
+            }
+
+            let hasActiveSession = false;
+
+            try {
+                const { data } = await axios.get(`${API_BASE_URL}/auth/session`, { withCredentials: true });
+
+                if (data.user) {
+                    hasActiveSession = true;
+                    dispatch(
+                        setUser({
+                            userId: data.user.id,
+                            email: data.user.email,
+                            isAdmin: data.user.isAdmin,
+                        })
+                    );
+                }
+            } catch (error) {
+                console.error(error);
+            }
+
+            if (hasActiveSession) {
+                navigate('/dashboard');
+            }
+        }
+        checkIsLoggedIn();
+    }, []);
 
     async function handleFormSubmit(event: React.FormEvent) {
         event.preventDefault();
@@ -41,7 +74,6 @@ export function Login() {
                     userId: data.user.id,
                     email: data.user.email,
                     isAdmin: data.user.isAdmin,
-                    familyId: data.user.familyId || '',
                 })
             );
 
