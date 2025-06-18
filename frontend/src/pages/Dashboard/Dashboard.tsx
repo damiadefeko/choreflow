@@ -5,6 +5,7 @@ import { API_BASE_URL } from '@/utils/constants';
 import axios from 'axios';
 import { useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
+import { SideNav } from './SideNav';
 
 export function Dashboard() {
     const userId = useAppSelector((state) => state.user.userId);
@@ -41,8 +42,10 @@ export function Dashboard() {
         }
     }, [familyId]);
     return (
-        <Page hideNavbar={true}>
-            <main>{familyId ? <h1>Welcome to your family dashboard!</h1> : <h1>Loading family data...</h1>}</main>
+        <Page hideNavbar={true} additionalStyles='!gap-0'>
+            <main className='w-full h-full flex flex-col flex-grow py-[40px] px-6'>
+                <SideNav />
+            </main>
         </Page>
     );
 }

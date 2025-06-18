@@ -23,6 +23,7 @@
     --primary-100: #4eb6a9;
     --primary-200: #406661;
     --primary-300: #206259;
+    --primary-light: rgba(78, 182, 169, 0.3);
     --text-color: #242323;
     --text-color-light: #333131;
     --radius: 0.625rem;
@@ -162,4 +163,11 @@ body {
     body {
         @apply bg-background text-foreground;
     }
+}
+
+.side-nav {
+    border-radius: 8px;
+    border: 1px solid var(--Neutral-300, #d4d4d4);
+    background: #fff;
+    box-shadow: 2px 4px 3px 0px rgba(0, 0, 0, 0.25);
 }
