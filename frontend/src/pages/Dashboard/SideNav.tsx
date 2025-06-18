@@ -10,8 +10,13 @@ import familyActiveIcon from '@/assets/icons/family-active.svg';
 import logoutIcon from '@/assets/icons/logout.svg';
 import logoutActiveIcon from '@/assets/icons/logout-active.svg';
 import { TabItem } from './Tabs/TabItem';
+import type { validTabNames } from './Dashboard';
 
-export function SideNav() {
+interface SideNavProps {
+    activeTab: string;
+    onTabChange: (tabName: validTabNames) => void;
+}
+export function SideNav(props: SideNavProps) {
     const userEmail = useAppSelector((state) => state.user.email);
     return (
         <div className='flex flex-col flex-grow w-[80%] md:w-[20%] h-full py-[12px] px-[16px] gap-[24px] side-nav'>
@@ -26,10 +31,34 @@ export function SideNav() {
                 <span className='text-[16px]'>{userEmail}</span>
             </div>
             <nav className='flex flex-col w-full gap-3'>
-                <TabItem name='Dashboard' image={dashboardIcon} imageActive={dashboardActiveIcon} isActive={true} />
-                <TabItem name='Chores' image={taskIcon} imageActive={taskActiveIcon} isActive={false} />
-                <TabItem name='Family' image={familyIcon} imageActive={familyActiveIcon} isActive={false} />
-                <TabItem name='Logout' image={logoutIcon} imageActive={logoutActiveIcon} isActive={false} />
+                <TabItem
+                    onTabChange={props.onTabChange}
+                    name='Dashboard'
+                    image={dashboardIcon}
+                    imageActive={dashboardActiveIcon}
+                    isActive={props.activeTab === 'Dashboard'}
+                />
+                <TabItem
+                    onTabChange={props.onTabChange}
+                    name='Chores'
+                    image={taskIcon}
+                    imageActive={taskActiveIcon}
+                    isActive={props.activeTab === 'Chores'}
+                />
+                <TabItem
+                    onTabChange={props.onTabChange}
+                    name='Family'
+                    image={familyIcon}
+                    imageActive={familyActiveIcon}
+                    isActive={props.activeTab === 'Family'}
+                />
+                <TabItem
+                    onTabChange={props.onTabChange}
+                    name='Logout'
+                    image={logoutIcon}
+                    imageActive={logoutActiveIcon}
+                    isActive={false}
+                />
             </nav>
         </div>
     );

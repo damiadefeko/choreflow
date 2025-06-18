@@ -167,7 +167,14 @@ body {
 
 .side-nav {
     border-radius: 8px;
-    border: 1px solid var(--Neutral-300, #d4d4d4);
+    border: 1px solid #d4d4d4;
     background: #fff;
     box-shadow: 2px 4px 3px 0px rgba(0, 0, 0, 0.25);
+}
+
+.tab-container {
+    border-radius: 12px;
+    border: 1px solid #d4d4d4;
+    background: #fff;
+    box-shadow: -4px -4px 4px 0px rgba(0, 0, 0, 0.25);
 }

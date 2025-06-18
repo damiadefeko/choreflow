@@ -1,13 +1,17 @@
+import type { validTabNames } from '../Dashboard';
+
 interface TabItemProps {
     image: string;
     imageActive: string;
     name: string;
     isActive: boolean;
+    onTabChange: (tabName: validTabNames) => void;
 }
 
 export function TabItem(props: TabItemProps) {
     return (
         <div
+            onClick={() => props.onTabChange(props.name as any)}
             className={`cursor-pointer flex py-[12px] px-[16px] items-center gap-4 rounded-[6px] hover:bg-(--primary-light) hover:text-(--primary-300) ${
                 props.isActive ? 'bg-(--primary-light) text-(--primary-300)' : ''
             }`}>
