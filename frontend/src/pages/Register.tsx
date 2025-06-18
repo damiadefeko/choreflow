@@ -9,6 +9,7 @@ import { useState } from 'react';
 import axios from 'axios';
 import { useAppDispatch } from '@/store/hooks';
 import { setUser } from '@/store/slices/userSlice';
+import { API_BASE_URL } from '@/utils/constants';
 
 export function Register() {
     const [email, setEmail] = useState('');
@@ -30,7 +31,7 @@ export function Register() {
         try {
             setSubmissionStatus(true);
             const { data } = await axios.post(
-                'http://localhost:3000/api/v1/auth/register',
+                `${API_BASE_URL}/auth/register`,
                 {
                     email,
                     password,
@@ -49,12 +50,13 @@ export function Register() {
                     userId: data.user.id,
                     email: data.user.email,
                     isAdmin: data.user.isAdmin,
-                    familyId: data.user.familyId || '', // Assuming familyId is part of the user object
+                    familyId: data.user.familyId || '',
                 })
             );
 
             setSubmissionStatus(false);
-            navigate('/dashboard'); // Redirect to the dashboard after successful registration
+            // Redirect to the dashboard after successful registration
+            navigate('/dashboard');
         } catch (error) {
             alert(error);
             setSubmissionStatus(false);
