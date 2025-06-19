@@ -1,10 +1,27 @@
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from '@/components/ui/chart';
 import { useAppSelector } from '@/store/hooks';
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
+import prizeImage from '@/assets/images/prize-placholder.jpg';
 
+interface ChoreItem {
+    name: string;
+    dueDate: string;
+}
+
+function ChoreItem(props: ChoreItem) {
+    return (
+        <div className='flex items-center w-full chore-item justify-between gap-4 px-[24px] py-[20px]'>
+            <span className='font-medium text-[20px]'>{props.name}</span>
+            <span className='text-[16px] text-[#ABABAB]'>{new Date(props.dueDate).toISOString().split('T')[0]}</span>
+        </div>
+    );
+}
 export function OverviewTab() {
     const chartData = useAppSelector((state) => state.family.members);
-    console.log('chartData', chartData);
+    const isAdmin = useAppSelector((state) => state.user.isAdmin);
+    const chores = useAppSelector((state) => state.chores.chores);
+
     const chartConfig = {
         score: {
             label: 'Score',
@@ -12,8 +29,8 @@ export function OverviewTab() {
         },
     } satisfies ChartConfig;
     return (
-        <div className='flex gap-4 w-full'>
-            <div className='flex flex-col w-[70%] gap-4 flex-grow h-full'>
+        <div className='flex gap-4 w-full justify-between'>
+            <div className='flex flex-col w-[60%] gap-4 h-full'>
                 <h3 className='text-[16px] md:text-[20px] xl:text-[24px]'>Weekly Scoreboard 📈</h3>
                 {chartData.length > 0 && (
                     <ChartContainer config={chartConfig} className='min-h-[50%] w-full'>
@@ -25,6 +42,33 @@ export function OverviewTab() {
                             <Bar dataKey='score' fill='var(--primary-100)' radius={4} />
                         </BarChart>
                     </ChartContainer>
+                )}
+            </div>
+            <div className='flex flex-col w-full justify-between items-end'>
+                <Card className='w-full max-w-[350px]'>
+                    <CardHeader>
+                        <CardTitle className='text-center text-[20px]'>Prize of the week 🏅</CardTitle>
+                        <CardDescription className='text-center'>Prize Name</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <img src={prizeImage} className='ml-auto mr-auto' />
+                    </CardContent>
+                </Card>
+                {!isAdmin && chores.length > 0 && (
+                    <div className='flex flex-col min-w-[350px] max-w-[100%] gap-2'>
+                        <h4 className='font-medium text-[20px] mb-2'>Due Chores 🔔</h4>
+                        {chores
+                            .map((chore, index) => {
+                                return (
+                                    <ChoreItem
+                                        key={`${chore.choreName}-${index}`}
+                                        name={chore.choreName}
+                                        dueDate={chore.choreDeadline}
+                                    />
+                                );
+                            })
+                            .slice(3)}
+                    </div>
                 )}
             </div>
         </div>

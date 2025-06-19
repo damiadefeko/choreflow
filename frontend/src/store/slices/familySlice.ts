@@ -1,11 +1,11 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
-interface FamilyMember {
+export interface FamilyMember {
     email: string;
     score: number;
 }
 
-interface FamilyState {
+export interface FamilyState {
     familyId: string | null;
     members: FamilyMember[];
     inviteId: string;

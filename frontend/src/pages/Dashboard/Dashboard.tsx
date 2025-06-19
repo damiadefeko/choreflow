@@ -9,6 +9,7 @@ import { SideNav } from './SideNav';
 import { logout } from '@/utils/helper';
 import { clearUser } from '@/store/slices/userSlice';
 import { OverviewTab } from './Tabs/OverviewTab';
+import { addChore } from '@/store/slices/choresSlice';
 
 export type validTabNames = 'Dashboard' | 'Chores' | 'Family' | 'Logout';
 
@@ -36,11 +37,12 @@ export function Dashboard() {
 
     useEffect(() => {
         if (!familyId) {
+            // In this function all the initial data that is needed for the app is fetched and set
             async function setUpInitialState() {
                 try {
                     const { data: familyData } = await axios.get(`${API_BASE_URL}/family`, { withCredentials: true });
                     // Extract necessary data from the response and dispatch to store
-                    const payload = {
+                    const familyPayload = {
                         familyId: familyData.family._id,
                         inviteId: familyData.family.inviteId,
                         members: familyData.family.familyMembers.map((member: any) => ({
@@ -48,7 +50,29 @@ export function Dashboard() {
                             score: member.score,
                         })),
                     };
-                    dispatch(setFamily(payload));
+
+                    const { data: choresData } = await axios.get(`${API_BASE_URL}/chores/${familyPayload.familyId}`, {
+                        withCredentials: true,
+                    });
+
+                    dispatch(setFamily(familyPayload));
+
+                    // @ts-ignore
+                    choresData.data.chores.forEach((chore) => {
+                        const payload = {
+                            choreName: chore.choreName,
+                            choreDescription: chore.choreDescription,
+                            choreDeadline: chore.choreDeadline,
+                            choreWeek: {
+                                family: familyPayload,
+                                weekStart: choresData.data.choreWeek.weekStart,
+                                weekPrize: choresData.data.choreWeek.weekPrize,
+                            },
+                            choreStatus: chore.choreStatus,
+                            assignees: familyPayload.members,
+                        };
+                        dispatch(addChore(payload as any));
+                    });
                 } catch (error) {
                     console.error(error);
                     // @ts-ignore
