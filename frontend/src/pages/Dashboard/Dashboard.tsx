@@ -8,6 +8,7 @@ import { Navigate, useNavigate } from 'react-router-dom';
 import { SideNav } from './SideNav';
 import { logout } from '@/utils/helper';
 import { clearUser } from '@/store/slices/userSlice';
+import { OverviewTab } from './Tabs/OverviewTab';
 
 export type validTabNames = 'Dashboard' | 'Chores' | 'Family' | 'Logout';
 
@@ -61,7 +62,9 @@ export function Dashboard() {
         <Page hideNavbar={true} additionalStyles='!gap-0'>
             <main className='w-full h-full flex flex-grow py-[40px] px-6 gap-9'>
                 <SideNav activeTab={activeTab} onTabChange={handleTabChange} />
-                <div className='w-full p-[32px] tab-container flex flex-grow'></div>
+                <div className='w-full p-[32px] tab-container flex flex-grow'>
+                    {activeTab === 'Dashboard' && <OverviewTab />}
+                </div>
             </main>
         </Page>
     );
