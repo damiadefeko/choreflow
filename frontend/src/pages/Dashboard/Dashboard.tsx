@@ -19,6 +19,7 @@ export function Dashboard() {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState<validTabNames>('Dashboard');
+    const [isNavHidden, setIsNavHidden] = useState(false);
 
     // Redirect to login or show an error if user is not logged in
     if (!userId) {
@@ -33,6 +34,10 @@ export function Dashboard() {
             dispatch(clearFamily());
             navigate('/');
         }
+    }
+
+    function handleToggleNav() {
+        setIsNavHidden((prevState) => !prevState);
     }
 
     useEffect(() => {
@@ -85,9 +90,10 @@ export function Dashboard() {
     return (
         <Page hideNavbar={true} additionalStyles='!gap-0'>
             <main className='w-full h-full flex flex-grow py-[40px] px-6 gap-9'>
-                <SideNav activeTab={activeTab} onTabChange={handleTabChange} />
+                {!isNavHidden && <SideNav activeTab={activeTab} onTabChange={handleTabChange} />}
+
                 <div className='w-full p-[32px] tab-container flex flex-grow'>
-                    {activeTab === 'Dashboard' && <OverviewTab />}
+                    {activeTab === 'Dashboard' && <OverviewTab onToggleNav={handleToggleNav} />}
                 </div>
             </main>
         </Page>

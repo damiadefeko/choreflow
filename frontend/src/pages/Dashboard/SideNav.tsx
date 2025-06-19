@@ -24,7 +24,7 @@ export function SideNav(props: SideNavProps) {
                 <img src={logo} className='w-[60px]' />
                 <span className='text-[14px] font-semibold'>Choreflow</span>
             </div>
-            <div className='flex items-center gap-[16px] px-[16px] pt-[20px] pb-[12px] border-b-1 border-b-[#E2E8F0]'>
+            <div className='flex items-center gap-[16px] px-[16px] pt-[20px] pb-[12px] border-b-1 border-b-[#E2E8F0] overflow-hidden text-ellipsis whitespace-nowrap'>
                 <Avatar className='w-[50px] h-[50px]'>
                     <AvatarImage src='https://github.com/shadcn.png' alt='@shadcn' />
                 </Avatar>

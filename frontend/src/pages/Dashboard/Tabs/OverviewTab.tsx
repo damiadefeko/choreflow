@@ -3,6 +3,7 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } f
 import { useAppSelector } from '@/store/hooks';
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
 import prizeImage from '@/assets/images/prize-placholder.jpg';
+import sideBarIcon from '@/assets/icons/sidebar.svg';
 
 interface ChoreItem {
     name: string;
@@ -17,7 +18,11 @@ function ChoreItem(props: ChoreItem) {
         </div>
     );
 }
-export function OverviewTab() {
+
+export interface TabProps {
+    onToggleNav: () => void;
+}
+export function OverviewTab(props: TabProps) {
     const chartData = useAppSelector((state) => state.family.members);
     const isAdmin = useAppSelector((state) => state.user.isAdmin);
     const chores = useAppSelector((state) => state.chores.chores);
@@ -29,9 +34,12 @@ export function OverviewTab() {
         },
     } satisfies ChartConfig;
     return (
-        <div className='flex gap-4 w-full justify-between'>
-            <div className='flex flex-col w-[60%] gap-4 h-full'>
-                <h3 className='text-[16px] md:text-[20px] xl:text-[24px]'>Weekly Scoreboard 📈</h3>
+        <div className='flex flex-col xl:flex-row gap-[32px] xl:gap-4 w-full justify-between'>
+            <div className='flex flex-col w-full xl:w-[60%] gap-4 h-full'>
+                <div className='flex gap-[10px]'>
+                    <img src={sideBarIcon} onClick={props.onToggleNav} className='block lg:hidden' />
+                    <h3 className='text-[16px] md:text-[20px] xl:text-[24px]'>Weekly Scoreboard 📈</h3>
+                </div>
                 {chartData.length > 0 && (
                     <ChartContainer config={chartConfig} className='min-h-[50%] w-full'>
                         <BarChart accessibilityLayer data={chartData}>
@@ -44,7 +52,7 @@ export function OverviewTab() {
                     </ChartContainer>
                 )}
             </div>
-            <div className='flex flex-col w-full justify-between items-end'>
+            <div className='flex flex-col w-full justify-between items-center xl:items-end'>
                 <Card className='w-full max-w-[350px]'>
                     <CardHeader>
                         <CardTitle className='text-center text-[20px]'>Prize of the week 🏅</CardTitle>
@@ -55,7 +63,7 @@ export function OverviewTab() {
                     </CardContent>
                 </Card>
                 {!isAdmin && chores.length > 0 && (
-                    <div className='flex flex-col min-w-[350px] max-w-[100%] gap-2'>
+                    <div className='flex flex-col w-auto max-w-[350px] gap-2 mt-5'>
                         <h4 className='font-medium text-[20px] mb-2'>Due Chores 🔔</h4>
                         {chores
                             .map((chore, index) => {
