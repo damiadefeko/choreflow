@@ -16,7 +16,7 @@ export function TabItem(props: TabItemProps) {
                 props.isActive ? 'bg-(--primary-light) text-(--primary-300)' : ''
             }`}>
             <img className='w-[32px]' src={props.isActive ? props.imageActive : props.image} />
-            <span className='text-[16px]'>{props.name}</span>
+            <span className='text-[14px] xl:text-[16px]'>{props.name}</span>
         </div>
     );
 }

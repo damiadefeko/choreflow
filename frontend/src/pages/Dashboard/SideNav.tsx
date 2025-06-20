@@ -21,14 +21,14 @@ export function SideNav(props: SideNavProps) {
     return (
         <div className='flex flex-col flex-grow w-[80%] md:w-[20%] h-full py-[12px] px-[16px] gap-[24px] side-nav'>
             <div className='flex items-center gap-[10px]'>
-                <img src={logo} className='w-[60px]' />
+                <img src={logo} className='w-[48px] xl:w-[60px]' />
                 <span className='text-[14px] font-semibold'>Choreflow</span>
             </div>
             <div className='flex items-center gap-[16px] px-[16px] pt-[20px] pb-[12px] border-b-1 border-b-[#E2E8F0] overflow-hidden text-ellipsis whitespace-nowrap'>
-                <Avatar className='w-[50px] h-[50px]'>
+                <Avatar className='w-[40px] xl:w-[50px] h-[40px] xl:h-[50px]'>
                     <AvatarImage src='https://github.com/shadcn.png' alt='@shadcn' />
                 </Avatar>
-                <span className='text-[16px]'>{userEmail}</span>
+                <span className='text-[14px] xl:text-[16px]'>{userEmail}</span>
             </div>
             <nav className='flex flex-col w-full gap-3'>
                 <TabItem

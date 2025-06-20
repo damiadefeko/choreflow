@@ -8,7 +8,7 @@ interface PageProps {
 export function Page(props: PageProps) {
     return (
         <div
-            className={`w-full h-full flex flex-col flex-grow text-(--text-color) gap-[64px] ${
+            className={`w-full h-full overflow-hidden flex flex-col flex-grow text-(--text-color) gap-[64px] ${
                 props.additionalStyles ?? ''
             }`}>
             {!props.hideNavbar && <Navbar />}

@@ -10,6 +10,7 @@ import { logout } from '@/utils/helper';
 import { clearUser } from '@/store/slices/userSlice';
 import { OverviewTab } from './Tabs/OverviewTab';
 import { addChore } from '@/store/slices/choresSlice';
+import { ChoresTab } from './Tabs/ChoresTab';
 
 export type validTabNames = 'Dashboard' | 'Chores' | 'Family' | 'Logout';
 
@@ -73,7 +74,7 @@ export function Dashboard() {
                                 weekStart: choresData.data.choreWeek.weekStart,
                                 weekPrize: choresData.data.choreWeek.weekPrize,
                             },
-                            choreStatus: chore.choreStatus,
+                            choreStaus: chore.choreStaus,
                             assignees: familyPayload.members,
                         };
                         dispatch(addChore(payload as any));
@@ -94,6 +95,7 @@ export function Dashboard() {
 
                 <div className='w-full p-[32px] tab-container flex flex-grow'>
                     {activeTab === 'Dashboard' && <OverviewTab onToggleNav={handleToggleNav} />}
+                    {activeTab === 'Chores' && <ChoresTab onToggleNav={handleToggleNav} />}
                 </div>
             </main>
         </Page>
