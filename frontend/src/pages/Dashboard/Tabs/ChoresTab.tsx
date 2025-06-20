@@ -5,6 +5,7 @@ import sideBarIcon from '@/assets/icons/sidebar.svg';
 
 export function ChoresTab(props: TabProps) {
     const chores = useAppSelector((state) => state.chores.chores);
+    const isAdmin = useAppSelector((state) => state.user.isAdmin);
     return (
         <div className='flex flex-col gap-[32px] xl:gap-4 w-full'>
             <header className='flex items-center justify-between'>
@@ -12,7 +13,7 @@ export function ChoresTab(props: TabProps) {
                     <img src={sideBarIcon} onClick={props.onToggleNav} className='block lg:hidden' />
                     <h3 className='text-[16px] md:text-[20px] xl:text-[24px]'>Chores 🧹 </h3>
                 </div>
-                <Button text='New Chore' size='default' />
+                {isAdmin && <Button text='New Chore' size='default' />}
             </header>
             <div className='flex items-start content-start gap-4 flex-wrap w-full'>
                 {chores.length === 0 && <p>No Chores</p>}
