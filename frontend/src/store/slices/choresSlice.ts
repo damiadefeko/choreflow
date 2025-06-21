@@ -30,11 +30,12 @@ export const choresSlice = createSlice({
     name: 'chores',
     initialState,
     reducers: {
-        addChore(state, action: PayloadAction<Chore>) {
+        addChore(state, action: PayloadAction<Partial<Chore>>) {
             const chore = action.payload;
             const isDuplicate = state.chores.some(curChore => curChore.id === chore.id);
 
             if (!isDuplicate) {
+                // @ts-ignore
                 state.chores.push(chore);
             }
         },

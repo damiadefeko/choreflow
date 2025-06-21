@@ -2,81 +2,53 @@ import { Label } from './ui/label';
 import { Button } from './Button';
 import { Card, CardHeader, CardTitle, CardContent } from './ui/card';
 import { Input } from './ui/input';
-import { updateChore, type Chore } from '@/store/slices/choresSlice';
+import { addChore, type Chore } from '@/store/slices/choresSlice';
 import { useState } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { createPortal } from 'react-dom';
 import { Textarea } from './ui/textarea';
 import { ScrollArea } from './ui/scroll-area';
-import { Separator } from './ui/separator';
-import closeIcon from '@/assets/icons/close.svg';
-import { formatDate } from '@/utils/helper';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import axios from 'axios';
 import { API_BASE_URL } from '@/utils/constants';
+import { AssigneeItem } from './ChoreModal';
+import type { FamilyMember } from '@/store/slices/familySlice';
 
-interface AssigneeItemProps {
-    name: string;
-    onDelete(name: string): void;
-}
-export function AssigneeItem(props: AssigneeItemProps) {
-    return (
-        <div>
-            <div className='flex justify-between'>
-                <div className='text-sm'>{props.name}</div>
-                <button className='cursor-pointer' onClick={() => props.onDelete(props.name)}>
-                    <img src={closeIcon} />
-                </button>
-            </div>
-            <Separator className='my-2' />
-        </div>
-    );
-}
-
-interface ChoreModal {
-    isAdmin: boolean;
-    chore: Chore;
+interface NewChoreModal {
     onClose(): void;
 }
 
-export function ChoreModal(props: ChoreModal) {
-    const allFamilyMembers = props.chore.choreWeek.family.members;
-    const isAdmin = useAppSelector((state) => state.user.isAdmin);
+export function NewChoreModal(props: NewChoreModal) {
+    const allFamilyMembers = useAppSelector((state) => state.family.members);
+    const familyId = useAppSelector((state) => state.family.familyId);
     const dispatch = useAppDispatch();
 
-    const [choreName, setChoreName] = useState(props.chore.choreName);
-    const [choreDescription, setChoreDescription] = useState(props.chore.choreDescription);
-    const [chorePoints, setChorePoints] = useState(props.chore.chorePoints);
-    const [choreDeadline, setChoreDeadline] = useState(formatDate(props.chore.choreDeadline));
-    const [choreAssigness, setChoreAssigness] = useState(props.chore.assignees);
+    const [choreName, setChoreName] = useState('');
+    const [choreDescription, setChoreDescription] = useState('');
+    const [chorePoints, setChorePoints] = useState(0);
+    const [choreDeadline, setChoreDeadline] = useState('');
+    const [choreAssigness, setChoreAssigness] = useState<FamilyMember[]>([]);
 
     async function handleFormSubmit(e: React.FormEvent) {
         e.preventDefault();
-        const updatedChore: Chore = {
-            id: props.chore.id,
+        const newChore: Partial<Chore> = {
             choreName,
             choreDescription,
             chorePoints,
             choreDeadline,
             assignees: choreAssigness,
-            choreWeek: props.chore.choreWeek,
-            choreStaus: props.chore.choreStaus,
+            choreStaus: 'pending',
         };
 
-        dispatch(updateChore(updatedChore));
+        dispatch(addChore(newChore));
 
         props.onClose();
 
-        // Remove unnecessary data for request
-        const filteredPayload = {
-            id: updateChore.bind,
-            choreName,
-            choreDescription,
-            chorePoints,
-            choreDeadline,
-            assignees: choreAssigness?.map((assignee) => assignee.id),
-        };
-        await axios.put(`${API_BASE_URL}/chores/${props.chore.id}`, filteredPayload, { withCredentials: true });
+        await axios.post(
+            `${API_BASE_URL}/chores/${familyId}`,
+            { ...newChore, assignees: choreAssigness.map((assignee) => assignee.id) },
+            { withCredentials: true }
+        );
     }
 
     function handleAssigneeDelete(assigneeName: string) {
@@ -119,7 +91,6 @@ export function ChoreModal(props: ChoreModal) {
                                 value={choreName}
                                 onChange={(e) => setChoreName(e.target.value)}
                                 required
-                                disabled={!isAdmin}
                             />
                         </div>
                         <div className='grid gap-2'>
@@ -131,7 +102,6 @@ export function ChoreModal(props: ChoreModal) {
                                 value={choreDescription}
                                 onChange={(e) => setChoreDescription(e.target.value)}
                                 required
-                                disabled={!isAdmin}
                             />
                         </div>
                         <div className='grid gap-2'>
@@ -144,7 +114,6 @@ export function ChoreModal(props: ChoreModal) {
                                 value={chorePoints}
                                 onChange={(e) => setChorePoints(parseInt(e.target.value))}
                                 required
-                                disabled={!isAdmin}
                             />
                         </div>
                         <div className='grid gap-2'>
@@ -157,48 +126,44 @@ export function ChoreModal(props: ChoreModal) {
                                 value={choreDeadline}
                                 onChange={(e) => setChoreDeadline(e.target.value)}
                                 required
-                                disabled={!isAdmin}
                             />
                         </div>
-                        {isAdmin && (
-                            <div className='grid gap-2'>
-                                <div className='flex items-center'>
-                                    <Label htmlFor='assignees'>New assignee</Label>
+                        <div className='grid gap-2'>
+                            <div className='flex items-center'>
+                                <Label htmlFor='assignees'>New assignee</Label>
+                            </div>
+                            <Select onValueChange={(value) => handleNewAssignee(value)} required>
+                                <SelectTrigger className='w-full'>
+                                    <SelectValue placeholder='Family member' />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {allFamilyMembers.map((member) => (
+                                        <SelectItem key={member.email} value={member.email}>
+                                            {member.email}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        <div className='grid gap-2'>
+                            <ScrollArea className='h-[150px] w-full rounded-md border'>
+                                <div className='p-4'>
+                                    <h4 className='mb-4 text-sm leading-none font-medium'>Assignees</h4>
+                                    {choreAssigness?.map((assignee) => (
+                                        <AssigneeItem
+                                            key={assignee.email}
+                                            name={assignee.email}
+                                            onDelete={handleAssigneeDelete}
+                                        />
+                                    ))}
                                 </div>
-                                <Select onValueChange={(value) => handleNewAssignee(value)}>
-                                    <SelectTrigger className='w-full'>
-                                        <SelectValue placeholder='Family member' />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {allFamilyMembers.map((member) => (
-                                            <SelectItem key={member.email} value={member.email}>
-                                                {member.email}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                        )}
-                        {isAdmin && (
-                            <div className='grid gap-2'>
-                                <ScrollArea className='h-[150px] w-full rounded-md border'>
-                                    <div className='p-4'>
-                                        <h4 className='mb-4 text-sm leading-none font-medium'>Assignees</h4>
-                                        {choreAssigness?.map((assignee) => (
-                                            <AssigneeItem
-                                                key={assignee.email}
-                                                name={assignee.email}
-                                                onDelete={handleAssigneeDelete}
-                                            />
-                                        ))}
-                                    </div>
-                                </ScrollArea>
-                            </div>
-                        )}
+                            </ScrollArea>
+                        </div>
                     </div>
                     <div className='flex gap-2 justify-between mt-6'>
                         <Button size='default' text='Close' onClick={props.onClose} />
-                        {isAdmin && <Button size='default' text='Save changes' />}
+                        <Button size='default' text='Add Chore' />
                     </div>
                 </form>
             </CardContent>

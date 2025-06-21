@@ -104,7 +104,7 @@ export function OverviewTab(props: TabProps) {
                                     />
                                 );
                             })
-                            .slice(3)}
+                            .slice(0, 3)}
                     </div>
                 )}
             </div>
