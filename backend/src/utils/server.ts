@@ -52,6 +52,8 @@ export async function setupServer(isTest: boolean = false) {
         app.use(morgan('dev'));
         app.use(express.urlencoded({ extended: true }));
         app.use(express.json());
+        // Tell server to trust railway reverse proxy
+        app.set('trust proxy', 1);
         app.use(session(sessionOptions));
         app.use(cors({
             origin: config.frontEndUrl,
