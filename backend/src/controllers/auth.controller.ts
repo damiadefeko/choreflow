@@ -75,14 +75,14 @@ export async function register(req: Request, res: Response, next: NextFunction) 
             const existingFamily = await Family.findOne({ inviteId });
             if (existingFamily) {
                 // If family exists, add the user as a family member
-                const familyMember = new FamilyMember({ user, family: existingFamily });
+                const familyMember = new FamilyMember({ user, family: existingFamily, score: Math.floor(Math.random() * 100) });
                 await familyMember.save();
                 // Push the new family member to the existing family's members
                 existingFamily.familyMembers.push(familyMember);
                 await existingFamily.save();
             } else {
                 // In this case the user was not invited to any family
-                const familyMember = new FamilyMember({ user });
+                const familyMember = new FamilyMember({ user, score: Math.floor(Math.random() * 100) });
                 await familyMember.save();
             }
         }
