@@ -22,8 +22,8 @@ export function ChoreItem(props: ChoreItem) {
             } ${props.status ? 'w-full md:w-[30%]' : 'w-full'} chore-item justify-between gap-4 px-[24px] py-[20px]`}>
             {!props.status && (
                 <>
-                    <span className='font-medium text-[20px]'>{props.name}</span>
-                    <span className='text-[16px] text-[#ABABAB]'>
+                    <span className='font-medium text-[14px] md:text-[16px] xl:text-[20px]'>{props.name}</span>
+                    <span className='text-[12px] md:text-[14px] xl:text-[16px] text-[#ABABAB]'>
                         {new Date(props.dueDate).toISOString().split('T')[0]}
                     </span>
                 </>
@@ -31,13 +31,13 @@ export function ChoreItem(props: ChoreItem) {
             {props.status && (
                 <>
                     <div className='flex items-center w-full justify-between gap-6'>
-                        <span className='font-medium text-[20px]'>{props.name}</span>
-                        <span className='text-[16px] text-[#ABABAB]'>
+                        <span className='font-medium text-[14px] md:text-[16px] xl:text-[20px'>{props.name}</span>
+                        <span className='text-[12px] md:text-[14px] xl:text-[16px] text-[#ABABAB]'>
                             {new Date(props.dueDate).toISOString().split('T')[0]}
                         </span>
                     </div>
                     <span
-                        className={`text-[14px] font-medium ${
+                        className={`text-[10px] md:text-[12px] xl:text-[14px] font-medium ${
                             props.status === 'rejected' ? 'text-[#DC2626]' : 'text-(--primary-300)'
                         }`}>
                         {props.status}

@@ -52,6 +52,7 @@ export function Dashboard() {
                         familyId: familyData.family._id,
                         inviteId: familyData.family.inviteId,
                         members: familyData.family.familyMembers.map((member: any) => ({
+                            id: member._id,
                             email: member.user.email,
                             score: member.score,
                         })),
@@ -66,6 +67,7 @@ export function Dashboard() {
                     // @ts-ignore
                     choresData.data.chores.forEach((chore) => {
                         const payload = {
+                            id: chore._id,
                             choreName: chore.choreName,
                             choreDescription: chore.choreDescription,
                             choreDeadline: chore.choreDeadline,

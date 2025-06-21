@@ -2,7 +2,7 @@ import { Label } from './ui/label';
 import { Button } from './Button';
 import { Card, CardHeader, CardTitle, CardContent } from './ui/card';
 import { Input } from './ui/input';
-import type { Chore } from '@/store/slices/choresSlice';
+import { updateChore, type Chore } from '@/store/slices/choresSlice';
 import { useState } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { createPortal } from 'react-dom';
@@ -11,7 +11,9 @@ import { ScrollArea } from './ui/scroll-area';
 import { Separator } from './ui/separator';
 import closeIcon from '@/assets/icons/close.svg';
 import { formatDate } from '@/utils/helper';
-import { useAppSelector } from '@/store/hooks';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import axios from 'axios';
+import { API_BASE_URL } from '@/utils/constants';
 
 interface AssigneeItemProps {
     name: string;
@@ -40,6 +42,7 @@ interface ChoreModal {
 export function ChoreModal(props: ChoreModal) {
     const allFamilyMembers = props.chore.choreWeek.family.members;
     const isAdmin = useAppSelector((state) => state.user.isAdmin);
+    const dispatch = useAppDispatch();
 
     const [choreName, setChoreName] = useState(props.chore.choreName);
     const [choreDescription, setChoreDescription] = useState(props.chore.choreDescription);
@@ -47,12 +50,33 @@ export function ChoreModal(props: ChoreModal) {
     const [choreDeadline, setChoreDeadline] = useState(formatDate(props.chore.choreDeadline));
     const [choreAssigness, setChoreAssigness] = useState(props.chore.assignees);
 
-    const [submissionStatus, setSubmissionStatus] = useState(false);
-
-    function handleFormSubmit(e: React.FormEvent) {
+    async function handleFormSubmit(e: React.FormEvent) {
         e.preventDefault();
+        const updatedChore: Chore = {
+            id: props.chore.id,
+            choreName,
+            choreDescription,
+            chorePoints,
+            choreDeadline,
+            assignees: choreAssigness,
+            choreWeek: props.chore.choreWeek,
+            choreStaus: props.chore.choreStaus,
+        };
+
+        dispatch(updateChore(updatedChore));
 
         props.onClose();
+
+        // Remove unnecessary data for request
+        const filteredPayload = {
+            id: updateChore.bind,
+            choreName,
+            choreDescription,
+            chorePoints,
+            choreDeadline,
+            assignees: choreAssigness?.map((assignee) => assignee.id),
+        };
+        await axios.put(`${API_BASE_URL}/chores/${props.chore.id}`, filteredPayload, { withCredentials: true });
     }
 
     function handleAssigneeDelete(assigneeName: string) {
@@ -173,15 +197,8 @@ export function ChoreModal(props: ChoreModal) {
                         )}
                     </div>
                     <div className='flex gap-2 justify-between mt-6'>
-                        <Button size='default' text='Close' onClick={props.onClose} additionalClasses='!w-full' />
-                        {isAdmin && (
-                            <Button
-                                size='default'
-                                text={submissionStatus ? 'Saving...' : 'Save changes'}
-                                disabled={submissionStatus}
-                                onClick={props.onClose}
-                            />
-                        )}
+                        <Button size='default' text='Close' onClick={props.onClose} />
+                        {isAdmin && <Button size='default' text='Save changes' />}
                     </div>
                 </form>
             </CardContent>

@@ -1,6 +1,7 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 export interface FamilyMember {
+    id: string;
     email: string;
     score: number;
 }
