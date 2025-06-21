@@ -7,11 +7,12 @@ export interface ChoreWeek {
     weekPrize: string;
 }
 
-interface Chore {
+export interface Chore {
     choreName: string;
     choreDescription: string;
     choreDeadline: string;
     choreWeek: ChoreWeek;
+    chorePoints: number;
     choreStaus: "pending" | "in progress" | "done" | "rejected";
     assignees?: FamilyMember[];
 }

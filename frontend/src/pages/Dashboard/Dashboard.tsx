@@ -74,6 +74,7 @@ export function Dashboard() {
                                 weekStart: choresData.data.choreWeek.weekStart,
                                 weekPrize: choresData.data.choreWeek.weekPrize,
                             },
+                            chorePoints: chore.chorePoints,
                             choreStaus: chore.choreStaus,
                             assignees: familyPayload.members,
                         };
