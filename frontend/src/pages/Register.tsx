@@ -4,7 +4,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate, useSearchParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
@@ -12,6 +12,9 @@ import { setUser } from '@/store/slices/userSlice';
 import { API_BASE_URL } from '@/utils/constants';
 
 export function Register() {
+    const [searchParams] = useSearchParams();
+    const inviteId = searchParams.get('inviteId');
+
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [password2, setPassword2] = useState('');
@@ -69,6 +72,7 @@ export function Register() {
                     email,
                     password,
                     isAdmin,
+                    inviteId,
                 },
                 {
                     headers: {
@@ -140,14 +144,16 @@ export function Register() {
                                         required
                                     />
                                 </div>
-                                <div className='flex items-center gap-3'>
-                                    <Checkbox
-                                        id='isAdmin'
-                                        checked={isAdmin}
-                                        onCheckedChange={(checked) => setIsAdmin(!!checked)}
-                                    />
-                                    <Label htmlFor='isAdmin'>Register as an admin</Label>
-                                </div>
+                                {!inviteId && (
+                                    <div className='flex items-center gap-3'>
+                                        <Checkbox
+                                            id='isAdmin'
+                                            checked={isAdmin}
+                                            onCheckedChange={(checked) => setIsAdmin(!!checked)}
+                                        />
+                                        <Label htmlFor='isAdmin'>Register as an admin</Label>
+                                    </div>
+                                )}
                             </div>
                             <Button
                                 size='default'

@@ -12,6 +12,7 @@ function App() {
                 <Route path='/register' element={<Register />} />
                 <Route path='/login' element={<Login />} />
                 <Route path='/dashboard' element={<Dashboard />} />
+                <Route path='/family/:familyId/join' element={<Register />} />
             </Routes>
         </BrowserRouter>
     );
