@@ -9,6 +9,7 @@ interface Config {
     dbUrl: string;
     cookieSecret: string;
     dbTestUrl?: string;
+    frontEndUrl: string;
 }
 
 const config: Config = {
@@ -17,6 +18,7 @@ const config: Config = {
     dbUrl: process.env.DATABASE_URL ?? '',
     cookieSecret: process.env.COOKIE_SECRET ?? 'my-cookie-secret',
     dbTestUrl: process.env.DATABASE_URL_TEST ?? '',
+    frontEndUrl: process.env.FRONT_END_URL ?? 'http://localhost:5173'
 };
 
 export default config;

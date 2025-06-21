@@ -54,7 +54,7 @@ export async function setupServer(isTest: boolean = false) {
         app.use(express.json());
         app.use(session(sessionOptions));
         app.use(cors({
-            origin: 'http://localhost:5173',
+            origin: config.frontEndUrl,
             credentials: true,
             methods: ['GET', 'POST', 'PUT', 'DELETE'],
             allowedHeaders: ['Content-Type', 'Authorization']
