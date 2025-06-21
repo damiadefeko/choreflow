@@ -23,3 +23,9 @@ export function formatDate(date: string) {
 
     return [year, month, day].join('-');
 }
+
+export function getClientUrl() {
+    if (typeof window !== 'undefined') {
+        return `${location.protocol}//${location.host}`
+    }
+}

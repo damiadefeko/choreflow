@@ -11,6 +11,7 @@ import { clearUser } from '@/store/slices/userSlice';
 import { OverviewTab } from './Tabs/OverviewTab';
 import { addChore } from '@/store/slices/choresSlice';
 import { ChoresTab } from './Tabs/ChoresTab';
+import { FamilyTab } from './Tabs/FamilyTab';
 
 export type validTabNames = 'Dashboard' | 'Chores' | 'Family' | 'Logout';
 
@@ -99,6 +100,7 @@ export function Dashboard() {
                 <div className='w-full p-[32px] tab-container flex flex-grow'>
                     {activeTab === 'Dashboard' && <OverviewTab onToggleNav={handleToggleNav} />}
                     {activeTab === 'Chores' && <ChoresTab onToggleNav={handleToggleNav} />}
+                    {activeTab === 'Family' && <FamilyTab onToggleNav={handleToggleNav} />}
                 </div>
             </main>
         </Page>
