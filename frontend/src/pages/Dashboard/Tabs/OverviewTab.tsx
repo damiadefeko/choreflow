@@ -17,9 +17,9 @@ export function ChoreItem(props: ChoreItem) {
         <div
             // @ts-ignore
             onClick={() => props.onClick(props.name)}
-            className={`flex ${props.status ? 'flex-col items-end' : 'flex-row items-center'} ${
-                props.status ? 'w-full md:w-[30%]' : 'w-full'
-            } chore-item justify-between gap-4 px-[24px] py-[20px]`}>
+            className={`${props.onClick ? 'cursor-pointer' : ''} flex ${
+                props.status ? 'flex-col items-end' : 'flex-row items-center'
+            } ${props.status ? 'w-full md:w-[30%]' : 'w-full'} chore-item justify-between gap-4 px-[24px] py-[20px]`}>
             {!props.status && (
                 <>
                     <span className='font-medium text-[20px]'>{props.name}</span>

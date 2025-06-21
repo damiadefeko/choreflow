@@ -11,6 +11,7 @@ import { ScrollArea } from './ui/scroll-area';
 import { Separator } from './ui/separator';
 import closeIcon from '@/assets/icons/close.svg';
 import { formatDate } from '@/utils/helper';
+import { useAppSelector } from '@/store/hooks';
 
 interface AssigneeItemProps {
     name: string;
@@ -38,6 +39,7 @@ interface ChoreModal {
 
 export function ChoreModal(props: ChoreModal) {
     const allFamilyMembers = props.chore.choreWeek.family.members;
+    const isAdmin = useAppSelector((state) => state.user.isAdmin);
 
     const [choreName, setChoreName] = useState(props.chore.choreName);
     const [choreDescription, setChoreDescription] = useState(props.chore.choreDescription);
@@ -93,6 +95,7 @@ export function ChoreModal(props: ChoreModal) {
                                 value={choreName}
                                 onChange={(e) => setChoreName(e.target.value)}
                                 required
+                                disabled={!isAdmin}
                             />
                         </div>
                         <div className='grid gap-2'>
@@ -104,6 +107,7 @@ export function ChoreModal(props: ChoreModal) {
                                 value={choreDescription}
                                 onChange={(e) => setChoreDescription(e.target.value)}
                                 required
+                                disabled={!isAdmin}
                             />
                         </div>
                         <div className='grid gap-2'>
@@ -116,6 +120,7 @@ export function ChoreModal(props: ChoreModal) {
                                 value={chorePoints}
                                 onChange={(e) => setChorePoints(parseInt(e.target.value))}
                                 required
+                                disabled={!isAdmin}
                             />
                         </div>
                         <div className='grid gap-2'>
@@ -128,48 +133,55 @@ export function ChoreModal(props: ChoreModal) {
                                 value={choreDeadline}
                                 onChange={(e) => setChoreDeadline(e.target.value)}
                                 required
+                                disabled={!isAdmin}
                             />
                         </div>
-                        <div className='grid gap-2'>
-                            <div className='flex items-center'>
-                                <Label htmlFor='assignees'>New assignee</Label>
-                            </div>
-                            <Select onValueChange={(value) => handleNewAssignee(value)}>
-                                <SelectTrigger className='w-full'>
-                                    <SelectValue placeholder='Family member' />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {allFamilyMembers.map((member) => (
-                                        <SelectItem key={member.email} value={member.email}>
-                                            {member.email}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                        </div>
-                        <div className='grid gap-2'>
-                            <ScrollArea className='h-[150px] w-full rounded-md border'>
-                                <div className='p-4'>
-                                    <h4 className='mb-4 text-sm leading-none font-medium'>Assignees</h4>
-                                    {choreAssigness?.map((assignee) => (
-                                        <AssigneeItem
-                                            key={assignee.email}
-                                            name={assignee.email}
-                                            onDelete={handleAssigneeDelete}
-                                        />
-                                    ))}
+                        {isAdmin && (
+                            <div className='grid gap-2'>
+                                <div className='flex items-center'>
+                                    <Label htmlFor='assignees'>New assignee</Label>
                                 </div>
-                            </ScrollArea>
-                        </div>
+                                <Select onValueChange={(value) => handleNewAssignee(value)}>
+                                    <SelectTrigger className='w-full'>
+                                        <SelectValue placeholder='Family member' />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {allFamilyMembers.map((member) => (
+                                            <SelectItem key={member.email} value={member.email}>
+                                                {member.email}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        )}
+                        {isAdmin && (
+                            <div className='grid gap-2'>
+                                <ScrollArea className='h-[150px] w-full rounded-md border'>
+                                    <div className='p-4'>
+                                        <h4 className='mb-4 text-sm leading-none font-medium'>Assignees</h4>
+                                        {choreAssigness?.map((assignee) => (
+                                            <AssigneeItem
+                                                key={assignee.email}
+                                                name={assignee.email}
+                                                onDelete={handleAssigneeDelete}
+                                            />
+                                        ))}
+                                    </div>
+                                </ScrollArea>
+                            </div>
+                        )}
                     </div>
                     <div className='flex gap-2 justify-between mt-6'>
-                        <Button size='default' text='Close' onClick={props.onClose} />
-                        <Button
-                            size='default'
-                            text={submissionStatus ? 'Saving...' : 'Save changes'}
-                            disabled={submissionStatus}
-                            onClick={props.onClose}
-                        />
+                        <Button size='default' text='Close' onClick={props.onClose} additionalClasses='!w-full' />
+                        {isAdmin && (
+                            <Button
+                                size='default'
+                                text={submissionStatus ? 'Saving...' : 'Save changes'}
+                                disabled={submissionStatus}
+                                onClick={props.onClose}
+                            />
+                        )}
                     </div>
                 </form>
             </CardContent>
