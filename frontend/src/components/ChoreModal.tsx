@@ -49,6 +49,7 @@ export function ChoreModal(props: ChoreModal) {
     const [chorePoints, setChorePoints] = useState(props.chore.chorePoints);
     const [choreDeadline, setChoreDeadline] = useState(formatDate(props.chore.choreDeadline));
     const [choreAssigness, setChoreAssigness] = useState(props.chore.assignees);
+    const [choreStatus, setChoreStatus] = useState(props.chore.choreStaus);
 
     async function handleFormSubmit(e: React.FormEvent) {
         e.preventDefault();
@@ -60,7 +61,7 @@ export function ChoreModal(props: ChoreModal) {
             choreDeadline,
             assignees: choreAssigness,
             choreWeek: props.chore.choreWeek,
-            choreStaus: props.chore.choreStaus,
+            choreStaus: choreStatus,
         };
 
         dispatch(updateChore(updatedChore));
@@ -74,6 +75,7 @@ export function ChoreModal(props: ChoreModal) {
             choreDescription,
             chorePoints,
             choreDeadline,
+            choreStaus: choreStatus,
             assignees: choreAssigness?.map((assignee) => assignee.id),
         };
         await axios.put(`${API_BASE_URL}/chores/${props.chore.id}`, filteredPayload, { withCredentials: true });
@@ -175,6 +177,32 @@ export function ChoreModal(props: ChoreModal) {
                                                 {member.email}
                                             </SelectItem>
                                         ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        )}
+                        {isAdmin && (
+                            <div className='grid gap-2'>
+                                <div className='flex items-center'>
+                                    <Label htmlFor='chore-status'>Chore Status</Label>
+                                </div>
+                                <Select onValueChange={(value) => setChoreStatus(value as any)} value={choreStatus}>
+                                    <SelectTrigger className='w-full'>
+                                        <SelectValue placeholder='pending' />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem key='pending' value='pending'>
+                                            pending
+                                        </SelectItem>
+                                        <SelectItem key='in progress' value='in progress'>
+                                            in progress
+                                        </SelectItem>
+                                        <SelectItem key='done' value='done'>
+                                            done
+                                        </SelectItem>
+                                        <SelectItem key='rejected' value='rejected'>
+                                            rejected
+                                        </SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
