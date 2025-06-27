@@ -58,32 +58,38 @@ export function Dashboard() {
                             score: member.score,
                         })),
                     };
+                    dispatch(setFamily(familyPayload));
 
                     const { data: choresData } = await axios.get(`${API_BASE_URL}/chores/${familyPayload.familyId}`, {
                         withCredentials: true,
                     });
-
-                    dispatch(setFamily(familyPayload));
-
                     // @ts-ignore
-                    choresData.data.chores.forEach((chore) => {
-                        const payload = {
-                            id: chore._id,
-                            choreName: chore.choreName,
-                            choreDescription: chore.choreDescription,
-                            choreDeadline: chore.choreDeadline,
-                            choreWeek: {
-                                family: familyPayload,
-                                weekStart: choresData.data.choreWeek.weekStart,
-                                weekPrize: choresData.data.choreWeek.weekPrize,
-                            },
-                            chorePoints: chore.chorePoints,
-                            choreStaus: chore.choreStaus,
-                            assignees: familyPayload.members,
-                        };
-                        dispatch(addChore(payload as any));
-                    });
+                    if (choresData.data.chores) {
+                        // @ts-ignore
+                        choresData.data.chores.forEach((chore) => {
+                            const payload = {
+                                id: chore._id,
+                                choreName: chore.choreName,
+                                choreDescription: chore.choreDescription,
+                                choreDeadline: chore.choreDeadline,
+                                choreWeek: {
+                                    family: familyPayload,
+                                    weekStart: choresData.data.choreWeek.weekStart,
+                                    weekPrize: choresData.data.choreWeek.weekPrize,
+                                },
+                                chorePoints: chore.chorePoints,
+                                choreStaus: chore.choreStaus,
+                                assignees: familyPayload.members,
+                            };
+                            dispatch(addChore(payload as any));
+                        });
+                    }
                 } catch (error) {
+                    // @ts-ignore
+                    if (error.response.data.code === 'NO_CHORE_WEEK') {
+                        console.warn('No chore week has been created for this family.');
+                        return;
+                    }
                     console.error(error);
                     // @ts-ignore
                     alert(error.response?.data?.message || 'An error occurred while fetching family data');

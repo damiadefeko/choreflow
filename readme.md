@@ -22,6 +22,20 @@ Chore Flow is a web app that helps families simplify chore management through an
 
 # 🛠️ Installation & Setup
 
+### ⚙️ Environment Variables
+
+Create **.env** file in backend/ and set the following vars
+
+```
+PORT=
+NODE_ENV=
+DATABASE_URL=
+COOKIE_SECRET=
+FRONT_END_URL=
+```
+
+Create **.env** file in frontend/ and set the following vars
+
 ### 🔧 Set up the backend
 
 ```
@@ -37,20 +51,6 @@ cd frontend
 npm install
 npm run dev
 ```
-
-### ⚙️ Environment Variables
-
-Create **.env** file in backend/ and set the following vars
-
-```
-PORT=
-NODE_ENV=
-DATABASE_URL=
-COOKIE_SECRET=
-FRONT_END_URL=
-```
-
-Create **.env** file in frontend/ and set the following vars
 
 ```
 VITE_API_BASE_URL=

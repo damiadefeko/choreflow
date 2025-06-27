@@ -71,8 +71,8 @@ export async function getChores(req: Request, res: Response, next: NextFunction)
         // Now get the latest chore week for the family by sorting by week
         const choreWeek = await ChoreWeek.find({ family: familyId }).sort({ weekStart: 'descending' }).limit(1);
         // No chore week means that there are no chores for the family
-        if (!choreWeek) {
-            throw new CustomError("No chore week found for this family", 404);
+        if (choreWeek.length === 0) {
+            throw new CustomError("No chore week found for this family", 404, 'NO_CHORE_WEEK');
         }
         // Get all the chores for the latest chore week
         const choresByWeek = await Chore.find({ choreWeek: choreWeek[0]._id }).populate('assignees');

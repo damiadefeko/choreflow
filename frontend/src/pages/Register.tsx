@@ -94,7 +94,9 @@ export function Register() {
             // Redirect to the dashboard after successful registration
             navigate('/dashboard');
         } catch (error) {
-            alert(error);
+            console.log(error);
+            // @ts-ignore
+            alert(error.response.data.message || error);
             setSubmissionStatus(false);
         }
     }
