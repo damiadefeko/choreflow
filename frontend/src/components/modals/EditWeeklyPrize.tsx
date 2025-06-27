@@ -2,17 +2,12 @@ import { Label } from '../ui/label';
 import { Button } from '../Button';
 import { Card, CardHeader, CardTitle, CardContent } from '../ui/card';
 import { Input } from '../ui/input';
-import { addChore, setChoreWeekPrize, updateChore, type Chore } from '@/store/slices/choresSlice';
+import { setChoreWeekPrize } from '@/store/slices/choresSlice';
 import { useState } from 'react';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { createPortal } from 'react-dom';
-import { Textarea } from '../ui/textarea';
-import { ScrollArea } from '../ui/scroll-area';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import axios from 'axios';
 import { API_BASE_URL } from '@/utils/constants';
-import { AssigneeItem } from './ChoreModal';
-import type { FamilyMember } from '@/store/slices/familySlice';
 
 interface EditWeeklyPrize {
     onClose(): void;
