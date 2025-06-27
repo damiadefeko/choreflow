@@ -2,9 +2,9 @@ import { Button } from '@/components/Button';
 import { ChoreItem, type TabProps } from './OverviewTab';
 import { useAppSelector } from '@/store/hooks';
 import sideBarIcon from '@/assets/icons/sidebar.svg';
-import { ChoreModal } from '@/components/ChoreModal';
+import { ChoreModal } from '@/components/modals/ChoreModal';
 import { useState } from 'react';
-import { NewChoreModal } from '@/components/NewChoreModal';
+import { NewChoreModal } from '@/components/modals/NewChoreModal';
 
 export function ChoresTab(props: TabProps) {
     const chores = useAppSelector((state) => state.chores.chores);

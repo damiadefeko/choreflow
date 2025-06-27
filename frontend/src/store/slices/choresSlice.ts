@@ -2,6 +2,7 @@ import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { FamilyMember, FamilyState } from "./familySlice";
 
 export interface ChoreWeek {
+    id: string;
     family: FamilyState;
     weekStart: Date;
     weekPrize: string;
@@ -44,9 +45,13 @@ export const choresSlice = createSlice({
             const choreIndex = state.chores.findIndex(curChore => curChore.id === payloadChore.id);
 
             state.chores[choreIndex] = payloadChore;
+        },
+        setChoreWeekPrize(state, action: PayloadAction<Partial<ChoreWeek>>) {
+            const { weekPrize } = action.payload;
+            state.chores.forEach(chore => chore.choreWeek.weekPrize = weekPrize as string);
         }
     }
 });
 
-export const { addChore, updateChore } = choresSlice.actions;
+export const { addChore, updateChore, setChoreWeekPrize } = choresSlice.actions;
 export default choresSlice.reducer;

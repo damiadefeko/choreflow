@@ -73,6 +73,7 @@ export function Dashboard() {
                                 choreDescription: chore.choreDescription,
                                 choreDeadline: chore.choreDeadline,
                                 choreWeek: {
+                                    id: choresData.data.choreWeek._id,
                                     family: familyPayload,
                                     weekStart: choresData.data.choreWeek.weekStart,
                                     weekPrize: choresData.data.choreWeek.weekPrize,
@@ -86,7 +87,7 @@ export function Dashboard() {
                     }
                 } catch (error) {
                     // @ts-ignore
-                    if (error.response.data.code === 'NO_CHORE_WEEK') {
+                    if (error.response?.data.code === 'NO_CHORE_WEEK') {
                         console.warn('No chore week has been created for this family.');
                         return;
                     }

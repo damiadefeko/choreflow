@@ -112,3 +112,24 @@ export async function updateChore(req: Request, res: Response, next: NextFunctio
         next(error);
     }
 }
+
+export async function updateChoreWeek(req: Request, res: Response, next: NextFunction) {
+    try {
+        const { choreWeekId } = req.params;
+        const { prizeName } = req.body;
+
+        const updatedChoreWeek = await ChoreWeek.findByIdAndUpdate(choreWeekId, { weekPrize: prizeName });
+        if (!updatedChoreWeek) {
+            throw new CustomError("Chore week not found", 401);
+        }
+
+        res.status(200).json({
+            success: true,
+            message: "Chore week successfully updated",
+            data: updatedChoreWeek
+        })
+
+    } catch (error) {
+        next(error);
+    }
+}
